@@ -1,5 +1,6 @@
 package com.dsd3.sofoto;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.LabeledIntent;
 import android.graphics.Bitmap;
@@ -18,6 +19,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -46,10 +49,18 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        final Context context = getApplicationContext();
+
         etDescription = findViewById(R.id.etDescription);
         btnCaptureImage = findViewById(R.id.btnCaptureImage);
         ivPostImage = findViewById(R.id.ivPostImage);
         btnSubmit = findViewById(R.id.btnSubmit);
+
+        GlideApp.with(context)
+                .load(R.drawable.ic_camera)
+                .placeholder(R.drawable.ic_camera)
+                .apply(new RequestOptions().override(100, 100))
+                .into(ivPostImage);
 
         btnCaptureImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,6 +79,11 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
                 savePost(description, user, photoFile);
+                GlideApp.with(context)
+                        .load(R.drawable.ic_camera)
+                        .placeholder(R.drawable.ic_camera)
+                        .apply(new RequestOptions().override(100, 100))
+                        .into(ivPostImage);
             }
         });
         queryPosts();
