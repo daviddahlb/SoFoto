@@ -92,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
                 savePost(description, user, photoFile);
+                Toast.makeText(context, "Submitted!", Toast.LENGTH_SHORT).show();
                 GlideApp.with(context)
                         .load(R.drawable.ic_camera)
                         .placeholder(R.drawable.ic_camera)
@@ -99,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
                         .into(ivPostImage);
             }
         });
+
         queryPosts();
     }
 
