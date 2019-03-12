@@ -1,198 +1,60 @@
 package com.dsd3.sofoto;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.LabeledIntent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.support.annotation.Nullable;
-import android.support.v4.content.FileProvider;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.Toast;
+import android.view.MenuItem;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
-import com.parse.FindCallback;
-import com.parse.ParseException;
-import com.parse.ParseFile;
-import com.parse.ParseQuery;
-import com.parse.ParseUser;
-import com.parse.SaveCallback;
-
-import java.io.File;
-import java.util.List;
+import com.dsd3.sofoto.fragments.ComposeFragment;
+import com.dsd3.sofoto.fragments.PostsFragment;
+import com.dsd3.sofoto.fragments.ProfileFragment;
 
 public class MainActivity extends AppCompatActivity {
 
     private final String TAG = "MainActivity";
-    private EditText etDescription;
-    private Button btnCaptureImage;
-    private ImageView ivPostImage;
-    private Button btnSubmit;
-    private Button btnLogout;
 
-    public final static int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034;
-    public String photoFileName = "photo.jpg";
-    private File photoFile;
+
+    private BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final Context context = getApplicationContext();
+        final FragmentManager fragmentManager = getSupportFragmentManager();
 
-        etDescription = findViewById(R.id.etDescription);
-        btnCaptureImage = findViewById(R.id.btnCaptureImage);
-        ivPostImage = findViewById(R.id.ivPostImage);
-        btnSubmit = findViewById(R.id.btnSubmit);
-        btnLogout = findViewById(R.id.btnLogout);
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
 
-        GlideApp.with(context)
-                .load(R.drawable.ic_camera)
-                .placeholder(R.drawable.ic_camera)
-                .apply(new RequestOptions().override(100, 100))
-                .into(ivPostImage);
-
-        btnCaptureImage.setOnClickListener(new View.OnClickListener() {
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public void onClick(View v) {
-                launchCamera();
-            }
-        });
-
-        btnLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ParseUser.logOut();
-                // TODO: clean exit to Login Activity
-                //ParseUser currentUser = ParseUser.getCurrentUser(); // this will now be
-/*                Intent i = new Intent(this, LoginActivity.class);
-                startActivity(i);*/
-                finish();
-            }
-        });
-        btnSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String description = etDescription.getText().toString();
-                ParseUser user = ParseUser.getCurrentUser();
-                if (photoFile == null || ivPostImage.getDrawable() == null){
-                    Log.e(TAG, "No photo to submit");
-                    Toast.makeText(MainActivity.this, "There is no photo!", Toast.LENGTH_SHORT).show();
-                    return;
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                Fragment fragment = new ComposeFragment();
+                switch (item.getItemId()) {
+                    case R.id.action_home:
+                        Log.d(TAG, "onNavi: home");
+                        // TODO: change fragment to home
+                        fragment = new PostsFragment();
+                        break;
+                    case R.id.action_compose:
+                        Log.d(TAG, "onNavi: compose");
+                        fragment = new ComposeFragment();
+                        break;
+                    case R.id.action_profile:
+                        // TODO: change fragment to profile
+                        Log.d(TAG, "onNavi: profile");
+                        fragment = new ProfileFragment();
+                        break;
                 }
-                savePost(description, user, photoFile);
-                Toast.makeText(context, "Submitted!", Toast.LENGTH_SHORT).show();
-                GlideApp.with(context)
-                        .load(R.drawable.ic_camera)
-                        .placeholder(R.drawable.ic_camera)
-                        .apply(new RequestOptions().override(100, 100))
-                        .into(ivPostImage);
+                fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
+                return true;
             }
         });
-
-        queryPosts();
+        // Set default selection
+        bottomNavigationView.setSelectedItemId(R.id.action_home);
     }
 
-    private void launchCamera() {
-        // create Intent to take a picture and return control to the calling application
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Create a File reference to access to future access
-        photoFile = getPhotoFileUri(photoFileName);
-
-        // wrap File object into a content provider
-        // required for API >= 24
-        // See https://guides.codepath.com/android/Sharing-Content-with-Intents#sharing-files-with-api-24-or-higher
-        Uri fileProvider = FileProvider.getUriForFile(MainActivity.this, "com.codepath.fileprovider", photoFile);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
-
-        // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
-        // So as long as the result is not null, it's safe to use the intent.
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            // Start the image capture intent to take photo
-            startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE){
-            if(resultCode == RESULT_OK){
-                // by this point we have the camera photo on disk
-                Bitmap takenImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
-                // RESIZE BITMAP, see section below
-                // Load the taken image into a preview
-                ivPostImage.setImageBitmap(takenImage);
-            }else{
-                Toast.makeText(this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    // Returns the File for a photo stored on disk given the fileName
-    public File getPhotoFileUri(String fileName) {
-        // Get safe storage directory for photos
-        // Use `getExternalFilesDir` on Context to access package-specific directories.
-        // This way, we don't need to request external read/write runtime permissions.
-        File mediaStorageDir = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), TAG);
-
-        // Create the storage directory if it does not exist
-        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
-            Log.d(TAG, "failed to create directory");
-        }
-
-        // Return the file target for the photo based on filename
-        File file = new File(mediaStorageDir.getPath() + File.separator + fileName);
-
-        return file;
-    }
-
-    private void savePost(String description, ParseUser parseUser, File photoFile) {
-        Post post = new Post();
-        post.setDescription(description);
-        post.setUser(parseUser);
-        post.setImage(new ParseFile(photoFile));
-        post.saveInBackground(new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                if (e != null){
-                    Log.d(TAG, "Error while saving");
-                    return;
-                }
-                Log.d(TAG, "Success");
-                etDescription.setText("");
-            }
-        });
-    }
-
-    private void queryPosts() {
-        ParseQuery<Post> postQuery = new ParseQuery<Post>(Post.class);
-        postQuery.include(Post.KEY_USER);
-        postQuery.findInBackground(new FindCallback<Post>() {
-            @Override
-            public void done(List<Post> posts, ParseException e) {
-                if (e != null){
-                    Log.e(TAG, "Error with query");
-                    e.printStackTrace();
-                    return;
-                }
-                for (int i = 0; i < posts.size(); i++)
-                {
-                    Post post = posts.get(i);
-                    Log.d(TAG, "Post: " + post.getDescription()
-                        + " Username: " + post.getUser().getUsername());
-                }
-            }
-        });
-    }
 }
