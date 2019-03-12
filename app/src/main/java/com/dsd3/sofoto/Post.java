@@ -1,6 +1,5 @@
 package com.dsd3.sofoto;
 
-import com.parse.Parse;
 import com.parse.ParseClassName;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
@@ -18,6 +17,7 @@ public class Post extends ParseObject {
         return KEY_CREATED_AT;
     }
 
+
     public String getDescription(){
         return getString(KEY_DESCRIPTION);
     }
@@ -26,6 +26,7 @@ public class Post extends ParseObject {
         put(KEY_DESCRIPTION, description);
     }
 
+
     public ParseFile getImage(){
         return getParseFile(KEY_IMAGE);
     }
@@ -33,6 +34,7 @@ public class Post extends ParseObject {
     public void setImage(ParseFile parseFile){
         put(KEY_IMAGE, parseFile);
     }
+
 
     public ParseUser getUser(){
         return getParseUser(KEY_USER);
