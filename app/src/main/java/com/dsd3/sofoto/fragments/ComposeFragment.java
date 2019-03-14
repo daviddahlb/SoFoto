@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,9 +87,6 @@ public class ComposeFragment extends Fragment {
             public void onClick(View v) {
                 ParseUser.logOut();
                 // TODO: clean exit to Login Activity
-                //ParseUser currentUser = ParseUser.getCurrentUser(); // this will now be
-/*                Intent i = new Intent(this, LoginActivity.class);
-                startActivity(i);*/
                 getActivity().finish();
             }
         });
@@ -104,7 +102,10 @@ public class ComposeFragment extends Fragment {
                     return;
                 }
                 savePost(description, user, photoFile);
-                Toast.makeText(context, "Submitted!", Toast.LENGTH_SHORT).show();
+                Toast submit_toast = Toast.makeText(context, "Submitted!", Toast.LENGTH_LONG);
+                submit_toast.setGravity(Gravity.CENTER, 0,0);
+                submit_toast.show();
+
                 GlideApp.with(context)
                         .load(R.drawable.ic_camera)
                         .placeholder(R.drawable.ic_camera)

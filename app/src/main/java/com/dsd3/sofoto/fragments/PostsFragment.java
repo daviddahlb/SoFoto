@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -41,6 +42,8 @@ public class PostsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
+        LinearLayoutManager layout_manager = new LinearLayoutManager(getContext());
+
         // Lookup the swipe container view
         swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
 
@@ -68,7 +71,11 @@ public class PostsFragment extends Fragment {
         // set the adapter on the recycler view
         rvPosts.setAdapter(adapter);
         // set the layout manager on the recycler view
-        rvPosts.setLayoutManager(new LinearLayoutManager(getContext()));
+        rvPosts.setLayoutManager(layout_manager);
+
+        DividerItemDecoration dividerItemDecoration =
+                new DividerItemDecoration(rvPosts.getContext(), layout_manager.getOrientation());
+        rvPosts.addItemDecoration(dividerItemDecoration);
 
         queryPosts();
     }
@@ -78,7 +85,6 @@ public class PostsFragment extends Fragment {
         postQuery.include(Post.KEY_USER);
         postQuery.setLimit(20);
         postQuery.addDescendingOrder(Post.getKeyCreatedat());
-        //postQuery.orderByDescending(Post.getKeyCreatedat());
 
         postQuery.findInBackground(new FindCallback<Post>() {
             @Override

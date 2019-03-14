@@ -2,6 +2,7 @@ package com.dsd3.sofoto;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,8 @@ import android.widget.TextView;
 import com.parse.ParseFile;
 
 import java.util.List;
+
+import static android.support.v7.widget.OrientationHelper.HORIZONTAL;
 
 public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> {
 

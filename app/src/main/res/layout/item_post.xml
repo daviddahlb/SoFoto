@@ -12,18 +12,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="@android:style/TextAppearance.SearchResult.Title"
-        tools:text="David" />
+        android:textColor="#070414"
+        android:textSize="24sp"
+        tools:text="David"
+        android:layout_marginLeft="10dp"/>
 
     <ImageView
         android:id="@+id/ivImage"
         android:layout_width="match_parent"
         android:layout_height="300dp"
+        android:contentDescription="image"
         tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
     <TextView
         android:id="@+id/tvDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:textSize="18sp"
         tools:text="hipster attempt"
-        android:layout_marginTop="15dp"/>
+        android:layout_marginLeft="10dp"/>
 </LinearLayout>

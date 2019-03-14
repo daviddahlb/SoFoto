@@ -6,8 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".LoginActivity"
     android:gravity="center_horizontal"
-    android:orientation="vertical"
-    android:background="#d1a379">
+    android:orientation="vertical">
 
     <EditText
         android:id="@+id/etUsername"
@@ -58,7 +57,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="160dp"
         android:text="Sign Up"
-        android:background="#8cf7c3"/>
+        android:background="@drawable/button_design"/>
 
     <Button
         android:id="@+id/btnLogin"
