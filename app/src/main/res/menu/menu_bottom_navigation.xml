@@ -4,8 +4,8 @@
 
     <item
         android:id="@+id/action_home"
-        android:icon="@android:drawable/ic_menu_compass"
-        android:title="Home"
+        android:icon="@drawable/ic_camera"
+        android:title="SoFoto"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_compose"
